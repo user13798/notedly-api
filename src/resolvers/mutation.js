@@ -10,13 +10,16 @@ const mongoose = require("mongoose");
 const gravatar = require("../util/gravatar");
 
 module.exports = {
+  // add the users context
   newNote: async (parent, args, { models, user }) => {
+    // if there's no user on the context, throw an authentication error
     if (!user) {
       throw new AuthenticationError("You must be signed in to create a note");
     }
 
     return await models.Note.create({
       content: args.content,
+      // reference the author's mongo id
       author: mongoose.Types.ObjectId(user.id),
     });
   },
