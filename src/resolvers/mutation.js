@@ -21,15 +21,19 @@ module.exports = {
     });
   },
   updateNote: async (parent, { id, content }, { models, user }) => {
+    // if not a user, throw an Authentication Error
     if (!user) {
       throw new AuthenticationError("You must be signed in to update a note");
     }
 
+    // find the note
     const note = await models.Note.findById(id);
+    // if the note owner and current user don't match, throw a forbidden error
     if (note && String(note.author) !== user.id) {
       throw new ForbiddenError("You don't have permissions to update the note");
     }
 
+    // Update the note in the db and return the updated note
     return await models.Note.findOneAndUpdate(
       {
         _id: id,
@@ -45,19 +49,24 @@ module.exports = {
     );
   },
   deleteNote: async (parent, { id }, { models, user }) => {
+    // if not a user, throw an Authentication Error
     if (!user) {
       throw new AuthenticationError("You must be signed in to delete a note");
     }
 
+    // find the note
     const note = await models.Note.findById(id);
+    // if the note owner and current user don't match, throw a forbidden error
     if (note && String(note.author) !== user.id) {
       throw new ForbiddenError("You don't have permissions to delete the note");
     }
 
     try {
+      // if everything checks out, remove the note
       await note.remove();
       return true;
     } catch (err) {
+      // if there's an error along the way, return false
       return false;
     }
   },
