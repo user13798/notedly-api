@@ -1,4 +1,4 @@
-// Require the mongose library
+// Require the mongoose library
 const mongoose = require("mongoose");
 
 module.exports = {
